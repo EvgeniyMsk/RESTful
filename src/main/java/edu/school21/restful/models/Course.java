@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -22,4 +23,20 @@ public class Course {
     private String description;
     @OneToMany
     private Set<Lesson> lessons;
+
+    public Course() {
+        this.teachers = new HashSet<>();
+        this.students = new HashSet<>();
+        this.lessons = new HashSet<>();
+    }
+
+    public Course(Date startDate, Date endDate, String name, String description) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.name = name;
+        this.description = description;
+        this.teachers = new HashSet<>();
+        this.students = new HashSet<>();
+        this.lessons = new HashSet<>();
+    }
 }

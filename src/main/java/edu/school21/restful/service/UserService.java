@@ -4,6 +4,8 @@ import edu.school21.restful.models.User;
 import edu.school21.restful.models.dto.UserDto;
 import edu.school21.restful.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,24 +17,35 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void createUser(UserDto userDto) {
-        User user = new User(userDto.getUsername(), userDto.getPassword());
-        userRepository.saveAndFlush(user);
-    }
-
     public User getUserById(Long id) {
         return userRepository.getUserById(id);
     }
 
-    public User getUserByUsername(String username) {
-        return userRepository.getUserByUsername(username);
+    public Page<User> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
-    public void updateUser(User user) {
-        userRepository.saveAndFlush(user);
+    public User createUser(UserDto userDto) {
+        User user = new User();
+        user.setFirstname(userDto.getFirstname());
+        user.setLastname(userDto.getLastname());
+        user.setUsername(userDto.getUsername());
+        user.setPassword(userDto.getPassword());
+        user.setRoles(userDto.getRoles());
+        return userRepository.saveAndFlush(user);
     }
 
-    public void deleteUserById(Long id) {
-        userRepository.deleteUsersById(id);
+    public User updateUser(UserDto userDto, String userId) {
+        User user = userRepository.getUserById(Long.parseLong(userId));
+        user.setFirstname(userDto.getFirstname());
+        user.setLastname(userDto.getLastname());
+        user.setUsername(userDto.getUsername());
+        user.setPassword(userDto.getPassword());
+        user.setRoles(userDto.getRoles());
+        return userRepository.saveAndFlush(user);
+    }
+
+    public void deleteUserById(String userId) {
+        userRepository.deleteUsersById(Long.parseLong(userId));
     }
 }
