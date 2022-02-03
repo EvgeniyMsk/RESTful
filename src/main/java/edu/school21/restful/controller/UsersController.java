@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/users")
@@ -31,9 +32,24 @@ public class UsersController {
     )
     public ResponseEntity<Page<User>> getAllUsers(@PageableDefault(sort = "id", size = 5) Pageable pageable) {
         try {
-            return new ResponseEntity<>(userService.getAllUsers(pageable), HttpStatus.OK);
+            Page<User> users = userService.getAllUsers(pageable);
+            return ResponseEntity.ok(users);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("{user-id}")
+    @Operation(
+            summary = "getUserById",
+            description = "Возвращает конкретного пользователя"
+    )
+    public ResponseEntity<User> getUserById(@PathVariable("user-id") String userId) {
+        try {
+            User user = userService.getUserById(Long.parseLong(userId));
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -45,7 +61,7 @@ public class UsersController {
     public ResponseEntity<User> addNewUser(@RequestBody UserDto userDto) {
         try {
             User user = userService.createUser(userDto);
-            return new ResponseEntity<>(user, HttpStatus.OK);
+            return ResponseEntity.ok(user);
         } catch (Exception e)
         {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -61,7 +77,7 @@ public class UsersController {
                                            @RequestBody UserDto userDto) {
         try {
             User user = userService.updateUser(userDto, userId);
-            return new ResponseEntity<>(user, HttpStatus.OK);
+            return ResponseEntity.ok(user);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -72,12 +88,12 @@ public class UsersController {
             summary = "deleteUser",
             description = "Удаление пользователя"
     )
-    public HttpStatus deleteUser (@PathVariable("user-id") String userId) {
+    public ResponseEntity<String> deleteUser (@PathVariable("user-id") String userId) {
         try {
             userService.deleteUserById(userId);
-            return HttpStatus.OK;
+            return ResponseEntity.ok("Successfully deleted!");
         } catch (Exception e) {
-            return HttpStatus.BAD_REQUEST;
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }

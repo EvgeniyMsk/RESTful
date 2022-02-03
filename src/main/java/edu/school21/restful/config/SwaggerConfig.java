@@ -19,7 +19,7 @@ public class SwaggerConfig {
                                         new Contact()
                                                 .email("qsymond@student.21-school.ru")
                                                 .url("https://21-school.ru")
-                                                .name("Evgeniy L.")
+                                                .name("Евгений Л., Дарья К.")
                                 )
                 );
     }

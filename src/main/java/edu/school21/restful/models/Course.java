@@ -16,24 +16,30 @@ public class Course {
     private Date startDate;
     private Date endDate;
     private String name;
-    @OneToMany
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
+            fetch = FetchType.EAGER)
     private Set<User> teachers;
-    @OneToMany
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
+            fetch = FetchType.EAGER)
     private Set<User> students;
     private String description;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "course_id")
     private Set<Lesson> lessons;
+    private String state;
 
     public Course() {
         this.teachers = new HashSet<>();
         this.students = new HashSet<>();
         this.lessons = new HashSet<>();
+        this.state = "DRAFT";
     }
 
     public Course(Date startDate, Date endDate, String name, String description) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.name = name;
+        this.state = "DRAFT";
         this.description = description;
         this.teachers = new HashSet<>();
         this.students = new HashSet<>();

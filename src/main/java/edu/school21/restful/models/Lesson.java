@@ -15,7 +15,6 @@ public class Lesson {
     private String startTime;
     private String endTime;
     private String dayOfWeek;
-    @OneToOne
+    @ManyToOne
     private User teacher;
-
 }
