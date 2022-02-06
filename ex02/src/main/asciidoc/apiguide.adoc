@@ -1,0 +1,57 @@
+= Course API [School 21, Moscow campus]
+:doctype: book
+:sectanchors:
+:sectlinks:
+
+== Written by Qsymond and Pcharlot
+
+=== Course publish
+You can publish a course with status *DRAFT*.
+
+==== request
+----
+PUT /courses/3/publish HTTP/1.1
+Accept: application/hal+json
+Host: localhost:8080
+----
+==== response
+----
+HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/hal+json
+Content-Length: 594
+
+{
+  "startDate" : "2022-01-01T12:00:00.000+00:00",
+  "endDate" : "2022-01-01T12:00:00.000+00:00",
+  "name" : "English",
+  "description" : "English course",
+  "state" : "PUBLISHED",
+  "_links" : {
+    "self" : {
+      "href" : "http://localhost:8080/courses/3"
+    },
+    "course" : {
+      "href" : "http://localhost:8080/courses/3"
+    },
+    "teachers" : {
+      "href" : "http://localhost:8080/courses/3/teachers"
+    },
+    "students" : {
+      "href" : "http://localhost:8080/courses/3/students"
+    },
+    "lessons" : {
+      "href" : "http://localhost:8080/courses/3/lessons"
+    }
+  }
+}
+----
+==== Table 1. response-fields
+|===
+^|*Path* ^| *Type* ^| *Description*
+^|startDate ^| String ^| Start date of course
+^|endDate ^| String ^| End date of course
+^|description ^| String ^| Description of course
+^|state ^| String ^| Srate of course
