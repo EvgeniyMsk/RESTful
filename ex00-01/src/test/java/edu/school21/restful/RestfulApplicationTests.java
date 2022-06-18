@@ -83,7 +83,7 @@ class RestfulApplicationTests {
                 .header("Authorization", "Bearer " + BEARER_TOKEN)
                 .accept(MediaType.ALL))
                 .andDo(print())
-                .andExpect(jsonPath("$.content", hasSize(10)))
+                .andExpect(jsonPath("$.content", hasSize(2)))
                 .andExpect(status().isOk());
     }
 
@@ -130,7 +130,7 @@ class RestfulApplicationTests {
         String BEARER_TOKEN = JsonPath.parse(response.getContentAsString()).read("$.token");
         //  Добавление пользователя
         int currentSize = userRepository.findAll().size();
-        mockMvc.perform(delete("/users/14")
+        mockMvc.perform(delete("/users/18")
                 .header("Authorization", "Bearer " + BEARER_TOKEN))
                 .andDo(print())
                 .andExpect(status().isOk());
