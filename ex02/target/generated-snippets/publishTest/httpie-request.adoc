@@ -1,5 +1,0 @@
-[source,bash]
-----
-$ http PUT 'http://localhost:8080/courses/18/publish' \
-    'Accept:application/hal+json'
-----
