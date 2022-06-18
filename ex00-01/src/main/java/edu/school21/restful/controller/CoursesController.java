@@ -5,6 +5,7 @@ import edu.school21.restful.models.Lesson;
 import edu.school21.restful.models.User;
 import edu.school21.restful.models.dto.CourseDto;
 import edu.school21.restful.models.dto.LessonDto;
+import edu.school21.restful.request.InformationRequest;
 import edu.school21.restful.request.UserRequest;
 import edu.school21.restful.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,7 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/courses")
 @Tag(name="Контроллер курсов", description="Обеспечивает управление курсами")
@@ -34,7 +35,7 @@ public class CoursesController {
             summary = "getAllCourses",
             description = "Возвращает все имеющиеся курсы [есть пагинация, сортировка по ID]"
     )
-    public ResponseEntity<Page<Course>> getAllCourses(@PageableDefault(sort = "id", size = 5) Pageable pageable) {
+    public ResponseEntity<Page<Course>> getAllCourses(@PageableDefault(sort = "id", size = 10) Pageable pageable) {
         try {
             Page<Course> coursePage = courseService.findAll(pageable);
             return ResponseEntity.ok(coursePage);
@@ -54,7 +55,7 @@ public class CoursesController {
             Course course = courseService.getCourseById(courseId);
             return ResponseEntity.ok(course);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -84,7 +85,7 @@ public class CoursesController {
             return ResponseEntity.ok(course);
         }
         catch (Exception c) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -93,12 +94,12 @@ public class CoursesController {
             summary = "deleteCourse",
             description = "Удаление курса по ID"
     )
-    public ResponseEntity<String> deleteCourse(@PathVariable("course-id") String courseId) {
+    public ResponseEntity<InformationRequest> deleteCourse(@PathVariable("course-id") String courseId) {
         try {
             courseService.deleteCourseById(courseId);
-            return ResponseEntity.ok("Successfully deleted!");
+            return ResponseEntity.ok(new InformationRequest(200, "Successfully deleted!"));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -108,12 +109,12 @@ public class CoursesController {
             description = "Возвращает уроки из курса по ID [есть пагинация, сортировка по ID]"
     )
     public ResponseEntity<Page<Lesson>> getLessonsByCourse(@PathVariable ("course-id") String courseId,
-                                                           @PageableDefault(sort = "id", size = 5) Pageable pageable)
+                                                           @PageableDefault(sort = "id", size = 10) Pageable pageable)
     {
         try {
             return ResponseEntity.ok(courseService.getLessonsByCourse(Long.parseLong(courseId), pageable));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -124,7 +125,7 @@ public class CoursesController {
     )
     public ResponseEntity<Page<Lesson>> addLessonToCourse(@PathVariable("course-id") String courseId,
                                                           @RequestBody LessonDto lessonDto,
-                                                          @PageableDefault(sort = "id", size = 5) Pageable pageable) {
+                                                          @PageableDefault(sort = "id", size = 10) Pageable pageable) {
         try {
             courseService.addLesson(courseId, lessonDto);
             return ResponseEntity.ok(courseService.getLessonsByCourse(Long.parseLong(courseId), pageable));
@@ -153,13 +154,13 @@ public class CoursesController {
             summary = "deleteLessonFromCourse",
             description = "Добавляет урок в курс по ID [есть пагинация, сортировка по ID]"
     )
-    public ResponseEntity<String> deleteLessonFromCourse(@PathVariable("course-id") String courseId,
+    public ResponseEntity<InformationRequest> deleteLessonFromCourse(@PathVariable("course-id") String courseId,
                                                          @PathVariable("lesson-id") String lessonId) {
         try {
             courseService.deleteLessonFromCourse(courseId, lessonId);
-            return ResponseEntity.ok("Successfully deleted!");
+            return ResponseEntity.ok(new InformationRequest(200, "Successfully deleted!"));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -169,11 +170,11 @@ public class CoursesController {
             description = "Возвращает студентов курса по ID [есть пагинация, сортировка по ID]"
     )
     public ResponseEntity<Page<User>> getStudentsByCourse(@PathVariable("course-id") String courseId,
-                                                          @PageableDefault(sort = "id", size = 5) Pageable pageable) {
+                                                          @PageableDefault(sort = "id", size = 10) Pageable pageable) {
         try {
             return ResponseEntity.ok(courseService.getStudentsByCourse(courseId, pageable));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -185,7 +186,7 @@ public class CoursesController {
     )
     public ResponseEntity<Page<User>> addStudentToCourse(@PathVariable("course-id") String courseId,
                                                          @RequestBody UserRequest userId,
-                                                         @PageableDefault(sort = "id", size = 5) Pageable pageable) {
+                                                         @PageableDefault(sort = "id", size = 10) Pageable pageable) {
         try {
             courseService.addStudentToCourse(courseId, userId.getUserId(), pageable);
             return ResponseEntity.ok(courseService.getStudentsByCourse(courseId, pageable));
@@ -200,13 +201,13 @@ public class CoursesController {
             summary = "addStudentToCourse",
             description = "Удаляет студента с курса по ID [есть пагинация, сортировка по ID]"
     )
-    public ResponseEntity<String> deleteStudentFromCourse(@PathVariable("course-id") String courseId,
+    public ResponseEntity<InformationRequest> deleteStudentFromCourse(@PathVariable("course-id") String courseId,
                                                           @PathVariable("student-id") String studentId) {
         try {
             courseService.deleteStudentFromCourse(courseId, studentId);
-            return ResponseEntity.ok("Successfully deleted!");
+            return ResponseEntity.ok(new InformationRequest(200, "Successfully deleted!"));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -217,11 +218,11 @@ public class CoursesController {
             description = "Возвращает студентов курса по ID [есть пагинация, сортировка по ID]"
     )
     public ResponseEntity<Page<User>> getTeachersByCourse(@PathVariable("course-id") String courseId,
-                                                          @PageableDefault(sort = "id", size = 5) Pageable pageable) {
+                                                          @PageableDefault(sort = "id", size = 10) Pageable pageable) {
         try {
             return ResponseEntity.ok(courseService.getTeachersByCourse(courseId, pageable));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -232,7 +233,7 @@ public class CoursesController {
     )
     public ResponseEntity<Page<User>> addTeacherToCourse(@PathVariable("course-id") String courseId,
                                                          @RequestBody UserRequest userId,
-                                                         @PageableDefault(sort = "id", size = 5) Pageable pageable) {
+                                                         @PageableDefault(sort = "id", size = 10) Pageable pageable) {
         try {
             courseService.addTeacherToCourse(courseId, userId.getUserId(), pageable);
             return ResponseEntity.ok(courseService.getTeachersByCourse(courseId, pageable));
@@ -247,13 +248,13 @@ public class CoursesController {
             summary = "deleteTeacherFromCourse",
             description = "Добавляет студента на курса по ID [есть пагинация, сортировка по ID]"
     )
-    public ResponseEntity<String> deleteTeacherFromCourse(@PathVariable("course-id") String courseId,
+    public ResponseEntity<InformationRequest> deleteTeacherFromCourse(@PathVariable("course-id") String courseId,
                                                           @PathVariable("teacher-id") String teacher) {
         try {
             courseService.deleteTeacherFromCourse(courseId, teacher);
-            return ResponseEntity.ok("Successfully deleted!");
+            return ResponseEntity.ok(new InformationRequest(200, "Successfully deleted!"));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }

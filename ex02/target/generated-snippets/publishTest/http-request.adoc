@@ -1,0 +1,7 @@
+[source,http,options="nowrap"]
+----
+PUT /courses/18/publish HTTP/1.1
+Accept: application/hal+json
+Host: localhost:8080
+
+----

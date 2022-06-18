@@ -13,13 +13,13 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(
                         new Info()
-                                .title("RESTful. Школа21, Московский кампус. [Qsymond, Pcharlot]")
+                                .title("RESTful. Школа21, Московский кампус. [Qsymond, Tfarenga]")
                                 .version("1.0.0")
                                 .contact(
                                         new Contact()
                                                 .email("qsymond@student.21-school.ru")
                                                 .url("https://21-school.ru")
-                                                .name("Евгений Л., Дарья К.")
+                                                .name("Евгений Л., Виктория В.")
                                 )
                 );
     }

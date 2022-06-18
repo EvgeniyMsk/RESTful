@@ -1,0 +1,27 @@
+[source,options="nowrap"]
+----
+{
+  "startDate" : "2022-06-04T21:30:00.000+00:00",
+  "endDate" : "2022-06-09T21:30:00.000+00:00",
+  "name" : "Новый курс",
+  "description" : "Курс",
+  "state" : "PUBLISHED",
+  "_links" : {
+    "self" : {
+      "href" : "http://localhost:8080/courses/18"
+    },
+    "course" : {
+      "href" : "http://localhost:8080/courses/18"
+    },
+    "lessons" : {
+      "href" : "http://localhost:8080/courses/18/lessons"
+    },
+    "students" : {
+      "href" : "http://localhost:8080/courses/18/students"
+    },
+    "teachers" : {
+      "href" : "http://localhost:8080/courses/18/teachers"
+    }
+  }
+}
+----

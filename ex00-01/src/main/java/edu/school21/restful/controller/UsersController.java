@@ -1,7 +1,9 @@
 package edu.school21.restful.controller;
 import edu.school21.restful.models.User;
 import edu.school21.restful.models.dto.UserDto;
+import edu.school21.restful.request.InformationRequest;
 import edu.school21.restful.service.UserService;
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +12,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/users")
 @Tag(name="Контроллер пользователей", description="Обеспечивает управление пользователями")
@@ -21,6 +27,19 @@ public class UsersController {
     @Autowired
     public UsersController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("me")
+    @Operation(
+            summary = "me",
+            description = "Возвращает самого себя"
+    )
+    public ResponseEntity<UserDetails> getMe(Principal principal) {
+        try {
+            return ResponseEntity.ok(userService.loadUserByUsername(principal.getName()));
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping
@@ -33,7 +52,7 @@ public class UsersController {
             Page<User> users = userService.getAllUsers(pageable);
             return ResponseEntity.ok(users);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -47,7 +66,7 @@ public class UsersController {
             User user = userService.getUserById(Long.parseLong(userId));
             return ResponseEntity.ok(user);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -86,12 +105,12 @@ public class UsersController {
             summary = "deleteUser",
             description = "Удаление пользователя"
     )
-    public ResponseEntity<String> deleteUser (@PathVariable("user-id") String userId) {
+    public ResponseEntity<InformationRequest> deleteUser (@PathVariable("user-id") String userId) {
         try {
             userService.deleteUserById(userId);
-            return ResponseEntity.ok("Successfully deleted!");
+            return ResponseEntity.ok(new InformationRequest(200, "Successfully deleted!"));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }

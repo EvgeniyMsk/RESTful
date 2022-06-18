@@ -3,7 +3,7 @@
 :sectanchors:
 :sectlinks:
 
-== Written by Qsymond and Pcharlot
+== Written by Qsymond and Tfarenga
 
 === Course publish
 You can publish a course with status *DRAFT*.

@@ -33,14 +33,14 @@ class RestfulApplicationTests {
 
     @BeforeEach
     public void init() {
-        Course course = courseRepository.findById(3L).orElseThrow(NotFoundException::new);
+        Course course = courseRepository.findById(18L).orElseThrow(NotFoundException::new);
         course.setState("DRAFT");
         courseRepository.save(course);
     }
 
     @Test
     public void publishTest() throws Exception {
-        ResultActions resultActions = mockMvc.perform(put("/courses/3/publish")
+        ResultActions resultActions = mockMvc.perform(put("/courses/18/publish")
         .accept(RestMediaTypes.HAL_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());

@@ -1,11 +1,13 @@
 package edu.school21.restful.service;
 
+import edu.school21.restful.exceptions.Custom400Exception;
 import edu.school21.restful.exceptions.NotFoundException;
 import edu.school21.restful.models.Course;
 import edu.school21.restful.models.Lesson;
 import edu.school21.restful.models.User;
 import edu.school21.restful.models.dto.CourseDto;
 import edu.school21.restful.models.dto.LessonDto;
+import edu.school21.restful.models.roles.ERole;
 import edu.school21.restful.repository.CourseRepository;
 import edu.school21.restful.repository.LessonRepository;
 import edu.school21.restful.repository.UserRepository;
@@ -86,8 +88,8 @@ public class CourseService {
         Course course = courseRepository.findById(Long.parseLong(courseId)).orElseThrow(NotFoundException::new);
         Lesson lesson = lessonRepository.findById(Long.parseLong(lessonId)).orElseThrow(NotFoundException::new);
         course.getLessons().remove(lesson);
-        courseRepository.saveAndFlush(course);
         lessonRepository.deleteById(Long.parseLong(lessonId));
+        courseRepository.saveAndFlush(course);
     }
 
     public Page<User> getStudentsByCourse(String courseId, Pageable pageable) {
@@ -97,9 +99,26 @@ public class CourseService {
 
     public void addStudentToCourse(String courseId, String userId, Pageable pageable) {
         Course course = courseRepository.findById(Long.parseLong(courseId)).orElseThrow(NotFoundException::new);
-        course.getStudents().add(userRepository.findById(Long.parseLong(userId)).orElseThrow(NotFoundException::new));
-        courseRepository.saveAndFlush(course);
-        getStudentsByCourse(courseId, pageable);
+        User user = userRepository.findById(Long.parseLong(userId)).orElseThrow(NotFoundException::new);
+        if (!user.getRoles().contains(ERole.ROLE_STUDENT))
+            throw new Custom400Exception();
+        else {
+            course.getStudents().add(userRepository.findById(Long.parseLong(userId)).orElseThrow(NotFoundException::new));
+            getStudentsByCourse(courseId, pageable);
+            courseRepository.saveAndFlush(course);
+        }
+    }
+
+    public void addTeacherToCourse(String courseId, String userId, Pageable pageable) {
+        Course course = courseRepository.findById(Long.parseLong(courseId)).orElseThrow(NotFoundException::new);
+        User user = userRepository.findById(Long.parseLong(userId)).orElseThrow(NotFoundException::new);
+        if (!user.getRoles().contains(ERole.ROLE_TEACHER))
+            throw new Custom400Exception();
+        else {
+            course.getTeachers().add(userRepository.findById(Long.parseLong(userId)).orElseThrow(NotFoundException::new));
+            getTeachersByCourse(courseId, pageable);
+            courseRepository.saveAndFlush(course);
+        }
     }
 
     public void deleteStudentFromCourse(String courseId, String userId) {
@@ -112,13 +131,6 @@ public class CourseService {
     public Page<User> getTeachersByCourse(String courseId, Pageable pageable) {
         List<User> teachers = userRepository.findTeachersByCourse(Long.parseLong(courseId), pageable);
         return new PageImpl<>(teachers, pageable, teachers.size());
-    }
-
-    public void addTeacherToCourse(String courseId, String userId, Pageable pageable) {
-        Course course = courseRepository.findById(Long.parseLong(courseId)).orElseThrow(NotFoundException::new);
-        course.getTeachers().add(userRepository.findById(Long.parseLong(userId)).orElseThrow(NotFoundException::new));
-        courseRepository.saveAndFlush(course);
-        getTeachersByCourse(courseId, pageable);
     }
 
     public void deleteTeacherFromCourse(String courseId, String userId) {

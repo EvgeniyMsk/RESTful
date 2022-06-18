@@ -21,6 +21,7 @@ public class User implements UserDetails {
     private Long id;
     private String firstname;
     private String lastname;
+    @Column(unique = true)
     private String username;
     private String password;
     @ElementCollection(targetClass = ERole.class, fetch = FetchType.EAGER)

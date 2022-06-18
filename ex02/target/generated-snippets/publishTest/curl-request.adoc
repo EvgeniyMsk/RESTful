@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/courses/18/publish' -i -X PUT \
+    -H 'Accept: application/hal+json'
+----
